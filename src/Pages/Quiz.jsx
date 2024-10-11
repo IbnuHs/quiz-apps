@@ -11,7 +11,8 @@ export default function Quiz() {
   const [score, setScore] = useState(0);
   const [index, setIndex] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
-  const [time, setTime] = useState(60);
+  const [time, setTime] = useState(30);
+  const [answeredQuestion, setAnsweredQuestion] = useState(0);
 
   const shuffleindex = (i) => {
     return i.sort(() => Math.random() - 0.5);
@@ -27,10 +28,12 @@ export default function Quiz() {
     }
     if (index === dataQuiz.length - 1) {
       setQuizFinished(true);
+      setAnsweredQuestion(0);
       localStorage.removeItem("quizProgress");
     } else {
       setIndex(index + 1);
     }
+    setAnsweredQuestion(answeredQuestion + 1);
   }
 
   const fetchApi = async () => {
@@ -51,7 +54,8 @@ export default function Quiz() {
     getData.refetch({ force: true }).then(() => {
       setIndex(0);
       setScore(0);
-      setTime(60);
+      setTime(30);
+      setAnsweredQuestion(0);
       setQuizFinished(false);
       localStorage.removeItem("quizProgress");
     });
@@ -63,6 +67,7 @@ export default function Quiz() {
       score,
       index,
       time,
+      answeredQuestion,
     };
     localStorage.setItem("quizProgress", JSON.stringify(quizState));
   };
@@ -75,6 +80,7 @@ export default function Quiz() {
       setScore(score);
       setIndex(index);
       setTime(time);
+      setAnsweredQuestion(answeredQuestion);
     }
   };
 
@@ -124,6 +130,8 @@ export default function Quiz() {
       <div className="w-[70%] border px-10 py-8 xl:w-[40%] xl:px-16 xl:py-12 text-center">
         <h1 className="text-lg">Your Score :</h1>
         <h1>{score}</h1>
+        <h1>number of questions answered</h1>
+        <h1>{answeredQuestion}</h1>
 
         <div className="mt-5">
           <button

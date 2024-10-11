@@ -37,7 +37,7 @@ export default function Login() {
     }
   };
   return (
-    <div className="border w-[50%] rounded-md px-10 py-8 ">
+    <div className="border w-[50%] rounded-md px-10 py-8 lg:w-[30%] lg:px-10">
       <h1 className="text-center text-lg font-semibold ">Login as</h1>
       <form
         action=""

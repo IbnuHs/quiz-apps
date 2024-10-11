@@ -40,6 +40,7 @@ export default function Category() {
   };
   const logout = () => {
     localStorage.setItem("isLoggedIn", false);
+    navigate("/");
   };
   return (
     <div className="w-[50%] border-2 px-5 py-8 rounded-md lg:w-[30%] lg:px-10">
