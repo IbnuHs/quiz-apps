@@ -3,13 +3,11 @@ import { api } from "../lib/API";
 import axios from "axios";
 // import { data } from "../lib/Data";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export default function Quiz() {
   const [quiz, setQuiz] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [length, setLenght] = useState(0);
   const [score, setScore] = useState(0);
   const [index, setIndex] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
@@ -19,19 +17,24 @@ export default function Quiz() {
     return i.sort(() => Math.random() - 0.5);
   };
 
-  const location = useLocation();
-  const { category, difficulty } = location.state;
+  const user = JSON.parse(localStorage.getItem("user"));
+  const category = localStorage.getItem("category");
+  const difficulty = localStorage.getItem("difficulty");
+  const navigate = useNavigate();
+
   function choseAnswer(correct_answer, answer, dataQuiz) {
     if (correct_answer === answer) {
       setScore(score + 1);
     }
     if (index === dataQuiz.length - 1) {
       setQuizFinished(true);
+      localStorage.removeItem("quizProgress");
     } else {
       setIndex(index + 1);
     }
   }
-  // console.log(category);
+  // console.log(user);
+  // console.log(user.quizHistory);
 
   const fetchApi = async () => {
     const res = await axios.get(
@@ -54,22 +57,57 @@ export default function Quiz() {
       setScore(0);
       setTime(60);
       setQuizFinished(false);
+      localStorage.removeItem("quizProgress");
+      // localStorage.removeItem("category");
+      // localStorage.removeItem("difficulty");
     });
-    getData.refetch();
+    // getData.refetch();
   }
+
+  const saveProgress = () => {
+    const quizState = {
+      quiz,
+      score,
+      index,
+      time,
+    };
+    localStorage.setItem("quizProgress", JSON.stringify(quizState));
+  };
+
+  const loadQuizState = () => {
+    const savedState = localStorage.getItem("quizProgress");
+    if (savedState) {
+      const { quiz, score, index, time } = JSON.parse(savedState);
+      setQuiz(quiz);
+      setScore(score);
+      setIndex(index);
+      setTime(time);
+    }
+  };
   // console.log(time);
   // return () => clearInterval(intervalId);
   useEffect(() => {
     if (time === 0) {
       setQuizFinished(true);
+      localStorage.removeItem("quizProgress");
+    }
+    if (quizFinished) {
+      localStorage.removeItem("quizProgress");
     }
     const intervalId = setInterval(() => {
       setTime((prevTime) => Math.max(prevTime - 1, 0));
+      saveProgress();
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, [index, quizFinished, time]);
   useEffect(() => {
+    loadQuizState();
+  }, []);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
     if (getData.data) {
       const quizData = getData.data.results.map((i) => {
         const answer = shuffleindex([...i.incorrect_answers, i.correct_answer]);
@@ -90,7 +128,7 @@ export default function Quiz() {
   }
   if (quizFinished) {
     return (
-      <div className="w-[70%] border px-10 py-8 text-center">
+      <div className="w-[70%] border px-10 py-8 xl:w-[40%] xl:px-16 xl:py-12 text-center">
         <h1 className="text-lg">Your Score :</h1>
         <h1>{score}</h1>
 
@@ -103,26 +141,20 @@ export default function Quiz() {
             Try Again
           </button>
         </div>
-        <Link to="/option" className="underline mt-4 text-sm text-blue-600">
-          Change Level
+
+        <Link
+          to="/option"
+          className="underline mt-5 px-5 text-white py-1 rounded inline-block text-sm bg-gray-800 border"
+          onClick={() => localStorage.removeItem("quizProgress")}
+        >
+          Home
         </Link>
       </div>
     );
   }
   if (getData.isSuccess && quiz.length > 0) {
-    // console.log(quiz[index].question);
-    // const quiz = getData.data;
-
-    // const dataQuiz = quiz.results.map((i) => {
-    //   const answer = shuffleindex([...i.incorrect_answers, i.correct_answer]);
-    //   return {
-    //     ...i,
-    //     answer,
-    //   };
-    // });
-    // console.log(dataQuiz);
     return (
-      <div className="w-[70%] border px-10 py-8 xl:w-[50%]">
+      <div className="w-[70%] border px-10 py-8 xl:w-[40%] xl:px-16 xl:py-12">
         <h1 className="font-semibold text-center text-xl">Quiz Time</h1>
 
         <div className="text-center mt-2 ">

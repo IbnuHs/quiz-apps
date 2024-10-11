@@ -6,7 +6,15 @@ export default function Category() {
   const [category, setCategory] = useState([]);
   const [selectedCategory, setSelecetedCategory] = useState("");
   const [selectedDifficulty, setSelecetedDifficulty] = useState("");
+  const navigate = useNavigate();
+  const user = localStorage.getItem("user");
+  const progress = localStorage.getItem("quizProgress");
+  // console.log(user.quizHistory);
+
   useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
     const fetchCategory = async () => {
       const res = await axios.get("https://opentdb.com/api_category.php");
       setCategory(res.data.trivia_categories);
@@ -14,13 +22,17 @@ export default function Category() {
 
     fetchCategory();
   });
-  const navigate = useNavigate();
+  if (progress) {
+    navigate("/quiz");
+    // console.log(progress);
+  }
+
   const submitForm = (e) => {
     if (selectedCategory && selectedDifficulty) {
       console.log(selectedCategory, selectedDifficulty);
-      navigate("/quiz", {
-        state: { category: selectedCategory, difficulty: selectedDifficulty },
-      });
+      localStorage.setItem("category", selectedCategory);
+      localStorage.setItem("difficulty", selectedDifficulty);
+      navigate("/quiz");
     }
     setSelecetedCategory("");
     setSelecetedDifficulty("");
@@ -44,6 +56,7 @@ export default function Category() {
             required
             onChange={(e) => setSelecetedCategory(e.target.value)}
             className="rounded-md border-2 text-sm font-semibold px-2 py-1 text-gray-600"
+            defaultValue={"Select Category"}
           >
             <option value="" selected disabled>
               Select Category
@@ -76,7 +89,7 @@ export default function Category() {
             <option value="hard">Hard</option>
           </select>
         </div>
-        <div className="flex justify-center mt-5">
+        <div className="flex justify-center mt-5 gap-5">
           <button
             type="submit"
             className="border-2 bg-gray-500 text-white px-4 py-[2px] rounded-md"

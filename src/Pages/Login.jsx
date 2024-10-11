@@ -10,33 +10,31 @@ export default function Login() {
     setVisible(!visible);
   };
   const navigate = useNavigate();
+  // const user = JSON.parse(localStorage.getItem("user"));
+  // console.log(user.password);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    const existingUser = users.find((user) => user.username === username);
-    if (existingUser) {
-      if (
-        existingUser.username === username &&
-        existingUser.password === password
-      ) {
-        console.log(existingUser.username === username);
+    let users = JSON.parse(localStorage.getItem("user"));
+    // const existingUser = users.find((user) => user.username === username);
+    console.log(users);
+    if (users) {
+      console.log("user hrer");
+      if (users.username === username && users.password === password) {
+        console.log(users.username === username);
         localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("currentUser", JSON.stringify(existingUser));
         alert("Login successful!");
         navigate("/option");
-      } else if (
-        existingUser.username === username &&
-        existingUser.password !== password
-      ) {
-        console.log(existingUser.password !== password);
+      } else if (users.username === username && users.password !== password) {
+        console.log(users.password !== password);
         alert("wrong password");
       }
-      console.log("tes");
-      console.log(existingUser);
+      // console.log("tes");
+      // console.log(existingUser);
     } else {
-      const newUser = { username, password, quizHistory: [] };
-      users.push(newUser);
+      const newUser = { username, password };
       localStorage.setItem("user", JSON.stringify(newUser));
+      console.log(newUser);
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       alert("Account created successfully and logged in!");
@@ -44,7 +42,7 @@ export default function Login() {
     }
   };
   return (
-    <div className="border w-[50%] rounded-md px-10 py-8">
+    <div className="border w-[50%] rounded-md px-10 py-8 ">
       <h1 className="text-center text-lg font-semibold ">Login as</h1>
       <form
         action=""

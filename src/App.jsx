@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/option" element={<Category />} />
           <Route path="/quiz" element={<Quiz />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
         </Routes>
       </QueryClientProvider>
     </div>
