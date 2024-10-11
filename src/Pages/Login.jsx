@@ -10,13 +10,10 @@ export default function Login() {
     setVisible(!visible);
   };
   const navigate = useNavigate();
-  // const user = JSON.parse(localStorage.getItem("user"));
-  // console.log(user.password);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     let users = JSON.parse(localStorage.getItem("user"));
-    // const existingUser = users.find((user) => user.username === username);
     console.log(users);
     if (users) {
       console.log("user hrer");
@@ -29,8 +26,6 @@ export default function Login() {
         console.log(users.password !== password);
         alert("wrong password");
       }
-      // console.log("tes");
-      // console.log(existingUser);
     } else {
       const newUser = { username, password };
       localStorage.setItem("user", JSON.stringify(newUser));

@@ -9,10 +9,11 @@ export default function Category() {
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
   const progress = localStorage.getItem("quizProgress");
-  // console.log(user.quizHistory);
+  const isLogin = JSON.parse(localStorage.getItem("isLoggedIn"));
 
   useEffect(() => {
-    if (!user) {
+    if (isLogin == false) {
+      alert("Must be Logged in");
       navigate("/");
     }
     const fetchCategory = async () => {
@@ -24,7 +25,6 @@ export default function Category() {
   });
   if (progress) {
     navigate("/quiz");
-    // console.log(progress);
   }
 
   const submitForm = (e) => {
@@ -37,6 +37,9 @@ export default function Category() {
     setSelecetedCategory("");
     setSelecetedDifficulty("");
     e.preventDefault();
+  };
+  const logout = () => {
+    localStorage.setItem("isLoggedIn", false);
   };
   return (
     <div className="w-[50%] border-2 px-5 py-8 rounded-md lg:w-[30%] lg:px-10">
@@ -95,6 +98,13 @@ export default function Category() {
             className="border-2 bg-gray-500 text-white px-4 py-[2px] rounded-md"
           >
             Submit
+          </button>
+          <button
+            type="button"
+            onClick={logout}
+            className="border-2 bg-red-500 text-white px-4 py-[2px] rounded-md"
+          >
+            Logout
           </button>
         </div>
       </form>

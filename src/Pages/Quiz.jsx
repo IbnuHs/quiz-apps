@@ -16,8 +16,7 @@ export default function Quiz() {
   const shuffleindex = (i) => {
     return i.sort(() => Math.random() - 0.5);
   };
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  const isLogin = JSON.parse(localStorage.getItem("isLoggedIn"));
   const category = localStorage.getItem("category");
   const difficulty = localStorage.getItem("difficulty");
   const navigate = useNavigate();
@@ -33,14 +32,11 @@ export default function Quiz() {
       setIndex(index + 1);
     }
   }
-  // console.log(user);
-  // console.log(user.quizHistory);
 
   const fetchApi = async () => {
     const res = await axios.get(
       `https://opentdb.com/api.php?amount=10&category=${category}&difficulty=${difficulty}&type=multiple`
     );
-    console.log(res);
     return res.data;
   };
 
@@ -58,10 +54,7 @@ export default function Quiz() {
       setTime(60);
       setQuizFinished(false);
       localStorage.removeItem("quizProgress");
-      // localStorage.removeItem("category");
-      // localStorage.removeItem("difficulty");
     });
-    // getData.refetch();
   }
 
   const saveProgress = () => {
@@ -84,8 +77,7 @@ export default function Quiz() {
       setTime(time);
     }
   };
-  // console.log(time);
-  // return () => clearInterval(intervalId);
+
   useEffect(() => {
     if (time === 0) {
       setQuizFinished(true);
@@ -105,7 +97,8 @@ export default function Quiz() {
     loadQuizState();
   }, []);
   useEffect(() => {
-    if (!user) {
+    if (!isLogin) {
+      alert("Must be Logged in");
       navigate("/");
     }
     if (getData.data) {
